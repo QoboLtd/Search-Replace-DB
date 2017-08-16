@@ -376,21 +376,6 @@ class icit_srdb_ui extends icit_srdb {
 
 				break;
 
-			case 'utf8mb4':
-
-				// call search replace class to alter engine
-				$parent = parent::__construct( array(
-					'name' => $this->get( 'name' ),
-					'user' => $this->get( 'user' ),
-					'pass' => $this->get( 'pass' ),
-					'host' => $this->get( 'host' ),
-					'port' => $this->get( 'port' ),
-					'tables' => $this->get( 'tables' ),
-					'alter_collation' => 'utf8mb4_unicode_ci',
-				) );
-
-				break;
-
 			case 'update':
 			default:
 
@@ -424,7 +409,7 @@ class icit_srdb_ui extends icit_srdb {
 
 			// return json version of results
 			header( 'Content-Type: application/json' );
-			
+
 			echo json_encode( array(
 				'errors' => $this->get( 'errors' ),
 				'report' => $this->get( 'report' ),
@@ -1101,8 +1086,6 @@ class icit_srdb_ui extends icit_srdb {
 
 						<input type="submit" name="submit[utf8]" value="convert to utf8 unicode" <?php if ( ! $this->db_valid() ) echo 'disabled="disabled"'; ?> class="db-required secondary field-advanced" />
 
-						<input type="submit" name="submit[utf8mb4]" value="convert to utf8mb4 unicode" <?php if ( ! $this->db_valid() ) echo 'disabled="disabled"'; ?> class="db-required secondary field-advanced" />
-
 					</span>
 
 				</div>
@@ -1275,7 +1258,6 @@ class icit_srdb_ui extends icit_srdb {
 
 			<title>interconnect/it : search replace db</title>
 
-			<?php $this->meta(); ?>
 			<?php $this->css(); ?>
 			<?php $this->js(); ?>
 
@@ -1290,13 +1272,7 @@ class icit_srdb_ui extends icit_srdb {
 	<?php
 	}
 
-	public function meta() {
-		?>
-		
-		<meta charset="utf-8" /> 
-		
-		<?php
-	}
+
 
 	public function css() {
 		?>
@@ -2215,7 +2191,7 @@ class icit_srdb_ui extends icit_srdb {
 								return false;
 							}
 
-							if ( ( submit == 'submit[innodb]' || submit == 'submit[utf8]' || submit == 'submit[utf8mb4]' ) && ! window.confirm( t.confirm_strings.modify ) ) {
+							if ( ( submit == 'submit[innodb]' || submit == 'submit[utf8]' ) && ! window.confirm( t.confirm_strings.modify ) ) {
 								t.complete();
 								return false;
 							}
@@ -2247,7 +2223,7 @@ class icit_srdb_ui extends icit_srdb {
 							}, data );
 
 							// count down & stop button
-							if ( submit.match( /dryrun|liverun|innodb|utf8|utf8mb4/ ) ) {
+							if ( submit.match( /dryrun|liverun|innodb|utf8/ ) ) {
 
 								// insert stop button
 								$( '<input type="submit" name="submit[stop]" value="stop" class="stop-button" />' )
@@ -2260,7 +2236,7 @@ class icit_srdb_ui extends icit_srdb {
 									} )
 									.insertAfter( $button );
 
-								if ( submit.match( /liverun|innodb|utf8|utf8mb4/ ) ) {
+								if ( submit.match( /liverun|innodb|utf8/ ) ) {
 
 									$button.val( button_text + ' in ... ' + seconds );
 
@@ -2686,64 +2662,63 @@ class icit_srdb_ui extends icit_srdb {
 												.find( '.from' ).text( item.from ).end()
 												.find( '.to' ).text( item.to ).end()
 												.appendTo( $changes );
+										if ( regex ) {
+                                            from_div = $change.find('.from');
+                                            to_div   = $change.find('.to');
 											
-										var from_div = $change.find('.from');
-										var to_div   = $change.find('.to');
-												
-										var original_text = from_div.html();
+											text = from_div.html();
 											
-										// Only display highlights if this isn't a serialised object.
-										// We CANNOT show highlights properly without writing a FULL COMPLETE
-										// php compatible serialize unserialize pair.
-										// Any attempt to work around the above restriction will not work,
-										// if you try it, you will find you are -writing such functions yourself-!
-										if ( !containsSerialisedString( original_text ) )
-										{
-											if ( regex ) {
-												var result_of_regex;
+											var result_of_regex;
+
+											var copied_char_from_source = 0;
+
+											var output_search_panel  = '';
+											var output_replace_panel = '';
+
+											while ( result_of_regex = regex_search_iter.exec( text ) ) {
+												var search_match_start = result_of_regex.index;
+												var search_match_end   = regex_search_iter.lastIndex;
 												
-												var copied_char_from_source = 0;
+												output_search_panel  = output_search_panel  + text.slice(copied_char_from_source, search_match_start);
+												output_replace_panel = output_replace_panel + text.slice(copied_char_from_source, search_match_start);
 												
-												var output_search_panel  = '';
-												var output_replace_panel = '';
+												output_search_panel  = output_search_panel  + '<span class="highlight">';
+												output_search_panel  = output_search_panel  + text.slice(search_match_start, search_match_end);
+												output_search_panel  = output_search_panel  + '</span>';
+												output_replace_panel = output_replace_panel + '<span class="highlight">';
+												output_replace_panel = output_replace_panel + text.slice(search_match_start, search_match_end).replace( regex_search, replace );
+												output_replace_panel = output_replace_panel + '</span>';
 												
-												while ( result_of_regex = regex_search_iter.exec( original_text ) ) {
-													var search_match_start = result_of_regex.index;
-													var search_match_end   = regex_search_iter.lastIndex;
-													
-													output_search_panel  = output_search_panel  + original_text.slice(copied_char_from_source, search_match_start);
-													output_replace_panel = output_replace_panel + original_text.slice(copied_char_from_source, search_match_start);
-													
-													output_search_panel  = output_search_panel  + '<span class="highlight">';
-													output_search_panel  = output_search_panel  + original_text.slice(search_match_start, search_match_end);
-													output_search_panel  = output_search_panel  + '</span>';
-													output_replace_panel = output_replace_panel + '<span class="highlight">';
-													output_replace_panel = output_replace_panel + original_text.slice(search_match_start, search_match_end).replace( regex_search, replace );
-													output_replace_panel = output_replace_panel + '</span>';
-													
-													copied_char_from_source = search_match_end;
-												}
-												
-												output_search_panel  = output_search_panel  + original_text.slice(copied_char_from_source);
-												output_replace_panel = output_replace_panel + original_text.slice(copied_char_from_source);
-																						
-												from_div.html( output_search_panel );
-												to_div.html( output_replace_panel );
-											} else {												
-												// Do a multiple straight up search replace on search with the highlight string we want to put in.
-												var original_chunks = original_text.split(search);
-												
-												from_div.html( original_chunks.join('<span class="highlight">' + search + '</span>') );
-												
-												if (replace)
-												{
-													// only display highlights if this isn't a serialised object
-													if ( !containsSerialisedString( to_div.html() ) ) 
-													{
-														to_div.html( original_chunks.join('<span class="highlight">' + replace + '</span>') );
-													}
-												}
+												copied_char_from_source = search_match_end;
 											}
+
+											output_search_panel  = output_search_panel  + text.slice(copied_char_from_source);
+											output_replace_panel = output_replace_panel + text.slice(copied_char_from_source);
+																						
+											from_div.html( output_search_panel );
+											// only display highlights if this isn't a serialised object
+											if ( !containsSerialisedString( text ) )
+											{
+												to_div.html( output_replace_panel );
+											}
+										} else {
+                                            from_div = $change.find('.from');
+
+											// do a multiple straight up search replace on search with the highlight string we want to put in.
+											var original_chunks = from_div.html().split(search);
+
+                                            from_div.html( original_chunks.join('<span class="highlight">' + search + '</span>') );
+
+                                            if (replace)
+                                            {
+												to_div = $change.find('.to');
+
+												// only display highlights if this isn't a serialised object
+												if ( !containsSerialisedString( to_div.html() ) )
+												{
+													to_div.html( original_chunks.join('<span class="highlight">' + replace + '</span>') );
+												}
+                                            }
 										}
 										return true;
 									} );
