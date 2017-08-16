@@ -812,8 +812,8 @@ class icit_srdb {
 						 'rows' => 0,
 						 'change' => 0,
 						 'updates' => 0,
-						 'start' => microtime( ),
-						 'end' => microtime( ),
+						 'start' => (float)microtime(),
+						 'end' => (float)microtime(),
 						 'errors' => array( ),
 						 'table_reports' => array( )
 						 );
@@ -823,8 +823,8 @@ class icit_srdb {
 						 'change' => 0,
 						 'changes' => array( ),
 						 'updates' => 0,
-						 'start' => microtime( ),
-						 'end' => microtime( ),
+						 'start' => (float)microtime(),
+						 'end' => (float)microtime(),
 						 'errors' => array( ),
 						 );
 
@@ -872,7 +872,7 @@ class icit_srdb {
 
 				// create new table report instance
 				$new_table_report = $table_report;
-				$new_table_report[ 'start' ] = microtime();
+				$new_table_report[ 'start' ] = (float)microtime();
 
 				$this->log( 'search_replace_table_start', $table, $search, $replace );
 
@@ -971,7 +971,7 @@ class icit_srdb {
 
 				}
 
-				$new_table_report[ 'end' ] = microtime();
+				$new_table_report[ 'end' ] = (float)microtime();
 
 				// store table report in main
 				$report[ 'table_reports' ][ $table ] = $new_table_report;
@@ -982,7 +982,7 @@ class icit_srdb {
 
 		}
 
-		$report[ 'end' ] = microtime( );
+		$report[ 'end' ] = (float)microtime();
 
 		$this->log( 'search_replace_end', $search, $replace, $report );
 
