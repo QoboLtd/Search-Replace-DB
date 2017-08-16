@@ -1,16 +1,19 @@
 {
-	"name": "interconnectit/search-replace-db",
-	"description": "A PHP search replace tool for quickly modifying a string throughout a database. Useful for changing the base URL when migrating a WordPress site from development to production.",
+	"name": "qobo/search-replace-db",
+	"description": "Fork of interconnectit/search-replace-db! A PHP search replace tool for quickly modifying a string throughout a database. Useful for changing the base URL when migrating a WordPress site from development to production.",
 	"license": "GPL-3.0",
-	"homepage": "https://github.com/interconnectit/Search-Replace-DB",
+	"homepage": "https://github.com/QoboLtd/Search-Replace-DB",
 	"require": {
 		"php": ">=5.3.0"
 	},
 	"support": {
-		"issues": "https://github.com/interconnectit/Search-Replace-DB/issues"
+		"issues": "https://github.com/QoboLtd/Search-Replace-DB/issues"
 	},
 	"bin": [ "srdb.cli.php" ],
 	"autoload": {
 		"files": [ "srdb.class.php" ]
+	},
+	"conflict": {
+		"interconnectit/search-replace-db": "*"
 	}
 }

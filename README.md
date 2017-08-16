@@ -6,6 +6,7 @@ If you find a problem let us know in the issues area and if you can improve the 
 
 ## Warnings & Limitations
 
+0. This package is a **fork** of [interconnectit/Search-Replace-DB](https://github.com/interconnectit/Search-Replace-DB)! Try to use the upstream original first.
 1. Three character UTF8 seems to break in certain cases.
 2. We can't test every possible case, though we do our best. Backups and verifications are important.
 3. The license for this script is GPL v3 and no longer WTFPL. Please bear this in mind if contributing or branching.
